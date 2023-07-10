@@ -1,3 +1,3 @@
-module https://github.com/romdalf/hello-path 
+module github.com/romdalf/hello-path 
 
 go 1.20
