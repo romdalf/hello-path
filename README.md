@@ -21,6 +21,10 @@ EXPOSE 8080
 ENTRYPOINT ["/hello"]
 ```
 
+```
+podman build -t ghcr.io/romdalf/hello:1.0-pub -f Containerfile.pub
+```
+
 ## deploy with ubi
 
 ```ini
@@ -44,4 +48,8 @@ COPY --from=build ./opt/app-root/src/hello .
 
 EXPOSE 8080
 ENTRYPOINT ["./hello"]
+```
+
+```
+podman build -t ghcr.io/romdalf/hello:1.0-ubi -f Containerfile.ubi
 ```
