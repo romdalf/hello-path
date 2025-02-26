@@ -1,35 +1,52 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"log"
-    "net/http"
+	"net/http"
+	"os"
+	"path/filepath"
+	"time"
 )
 
 func main() {
+	// ensure log directory exists
+	logDir := "http-hello-log"
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		log.Fatal("Failed to create log directory:", err)
+	}
 
-	// print the hello message with the URL path 
+	// open log file with current date
+	logFile := filepath.Join(logDir, time.Now().Format("2006-01-02")+".log")
+	f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal("Failed to open log file:", err)
+	}
+	defer f.Close()
+
+	// create logger
+	logger := log.New(f, "", log.LstdFlags)
+
+	// handle HTTP requests
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "Hello from URL path: %s\n", r.URL.Path)
+		fmt.Fprintf(w, "Hello from URL path: %s\n", r.URL.Path)
 
-		// if URL path is root - propose a test
 		if r.URL.Path == "/" {
-			fmt.Fprintf(w, "Try to add /partner as a path.")
+			fmt.Fprintf(w, "Try to add /netapp as a path.")
 		}
 
-		// print the URL path at the console
 		if r.URL.Path != "/favicon.ico" {
+			// log to console
 			fmt.Printf("User requested the URL path: %s\n", r.URL.Path)
+			// log to file
+			logger.Printf("Request from %s: %s %s\n", r.RemoteAddr, r.Method, r.URL.Path)
 		}
-    })
+	})
 
-	// print message at the console
-	fmt.Println("Red Hat Partner Meetup BeLux - Hello World")
+	fmt.Println("Hello from Path Service")
 	fmt.Println("--> Server running on http://localhost:8080")
 
-	// start the service and listen on the given port
-    if err := http.ListenAndServe(":8080", nil); err != nil {
-		// print error messages at the console
+	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
 }
