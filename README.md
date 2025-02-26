@@ -55,5 +55,5 @@ ENTRYPOINT ["./hello"]
 ```
 
 ```
-podman build -t ghcr.io/romdalf/hello:1.0-ubi -f Containerfile.ubi
+podman build -t ghcr.io/romdalf/hello:1.1-ubi -f Containerfile.ubi
 ```

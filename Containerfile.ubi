@@ -8,7 +8,7 @@ RUN go mod tidy
 
 COPY *.go ./
 
-RUN CGO_ENABLED=0 go build -o .
+RUN env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o .
 
 FROM registry.access.redhat.com/ubi8/ubi-micro
 

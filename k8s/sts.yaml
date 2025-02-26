@@ -1,0 +1,74 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: protect-hello-path
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: protect-hello-path
+  namespace: protect-hello-path
+  labels:
+    app: protect-hello-path
+    env: dev
+spec:
+  type: ClusterIP
+  ports:
+   - port: 8080
+     protocol: TCP
+     targetPort: 8080
+  selector:
+    app: protect-hello-path
+    env: dev
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: protect-hello-path
+  namespace: protect-hello-path
+spec:
+  port:
+    targetPort: 8080 
+  to:
+    kind: Service
+    name: protect-hello-path
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: protect-hello-path
+  namespace: protect-hello-path
+spec:
+  selector:
+    matchLabels:
+      app: protect-hello-path
+      env: dev
+  serviceName: protect-hello-path
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: protect-hello-path
+        env: dev
+    spec:
+      containers:
+        - name: protect-hello-path
+          image: ghcr.io/romdalf/hello:1.1-ubi
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: protect-hello-path-pvc
+              mountPath: /http-hello-log
+  volumeClaimTemplates:
+    - metadata:
+        name: protect-hello-path-pvc
+        labels:
+          app: protect-hello-path
+          env: dev
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "trident-ontap-nas"
+        resources:
+          requests:
+            storage: 1Gi
