@@ -1,0 +1,15 @@
+FROM golang:1.20 
+
+WORKDIR /app
+
+COPY go.mod ./
+RUN go mod edit -module=github.com/romdalf/hello-path
+RUN go mod download
+
+COPY *.go ./
+
+RUN CGO_ENABLED=0 go build -o /hello
+
+EXPOSE 8080
+
+ENTRYPOINT ["/hello"]

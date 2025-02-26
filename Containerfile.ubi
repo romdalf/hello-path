@@ -1,37 +1,3 @@
-# hello-path
-
-
-## deploy with community
-
-Adapt to match your needs!
-
-```ini
-FROM golang:1.20 
-
-WORKDIR /app
-
-COPY go.mod ./
-RUN go mod edit -module=github.com/romdalf/hello-path
-RUN go mod download
-
-COPY *.go ./
-
-RUN CGO_ENABLED=0 go build -o /hello
-
-EXPOSE 8080
-
-ENTRYPOINT ["/hello"]
-```
-
-```
-podman build -t ghcr.io/romdalf/hello:1.1-pub -f Containerfile.pub
-```
-
-## deploy with ubi
-
-Adapt to match your needs!
-
-```ini
 FROM registry.access.redhat.com/ubi8/go-toolset AS build
 
 # prefer the SHA tagging like registry.access.redhat.com/ubi8/go-toolset@sha256:168ac23af41e6c5a6fc75490ea2ff9ffde59702c6ee15d8c005b3e3a3634fcc2 AS build
@@ -52,8 +18,3 @@ COPY --from=build ./opt/app-root/src/hello .
 
 EXPOSE 8080
 ENTRYPOINT ["./hello"]
-```
-
-```
-podman build -t ghcr.io/romdalf/hello:1.0-ubi -f Containerfile.ubi
-```
