@@ -3,13 +3,15 @@
 
 ## deploy with community
 
+Adapt to match your needs!
+
 ```ini
-FROM golang:1.19 
+FROM golang:1.20 
 
 WORKDIR /app
 
 COPY go.mod ./
-RUN go mod edit -module=github.com/romdalf/hello
+RUN go mod edit -module=github.com/romdalf/hello-path
 RUN go mod download
 
 COPY *.go ./
@@ -22,7 +24,7 @@ ENTRYPOINT ["/hello"]
 ```
 
 ```
-podman build -t ghcr.io/romdalf/hello:1.0-pub -f Containerfile.pub
+podman build -t ghcr.io/romdalf/hello:1.1-pub -f Containerfile.pub
 ```
 
 ## deploy with ubi
